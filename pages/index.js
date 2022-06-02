@@ -1,6 +1,15 @@
+import Head from "next/head";
+
 export default function IndexPage(props) {
-  console.log(props);
-  return <div>Hello World. </div>;
+  const pageData = props?.data?.data?.pageCollection?.items?.[0];
+  if (!pageData) return "Page not found";
+  return (
+    <>
+      <Head>
+        <title>{pageData.title}</title>
+      </Head>
+    </>
+  );
 }
 
 export async function getServerSideProps(context) {
