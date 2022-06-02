@@ -15,6 +15,8 @@ export default function IndexPage(props) {
 }
 
 export async function getServerSideProps(context) {
+  const { query } = context;
+  console.log(query);
   const response = await fetch(
     "https://graphql.contentful.com/content/v1/spaces/wn1reipdztrw/",
     {
