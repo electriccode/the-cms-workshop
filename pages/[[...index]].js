@@ -2,6 +2,7 @@ import Head from "next/head";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
 export default function IndexPage(props) {
+  console.log(props);
   const pageData = props?.data?.data?.pageCollection?.items?.[0];
   if (!pageData) return "Page not found";
   return (
@@ -16,7 +17,17 @@ export default function IndexPage(props) {
 
 export async function getServerSideProps(context) {
   const { query } = context;
-  console.log(query);
+  let slug = "";
+  let predicate = ", where: { slug_exists: false }";
+  if (query.index) {
+    slug = query.index.join("/");
+    predicate = ', where: { slug: \\"' + slug + '\\" }';
+  }
+  const body =
+    '{"query":"query {\\n  pageCollection(limit: 1' +
+    predicate +
+    ') {\\n    items {\\n      title\\n      slug\\n      body {\\n        json\\n      }\\n    }\\n  }\\n}","variables":null}';
+  console.log({ query, slug, predicate, body });
   const response = await fetch(
     "https://graphql.contentful.com/content/v1/spaces/wn1reipdztrw/",
     {
@@ -24,8 +35,7 @@ export async function getServerSideProps(context) {
         authorization: "Bearer 6Eb9ZGQrMcRFqgmeSj1I6z_aPzuQR30RBvs4FPQEXXI",
         "content-type": "application/json"
       },
-      body:
-        '{"query":"query {\\n  pageCollection(limit: 1) {\\n    items {\\n      title\\n      slug\\n      body {\\n        json\\n      }\\n    }\\n  }\\n}","variables":null}',
+      body,
       method: "POST"
     }
   );
