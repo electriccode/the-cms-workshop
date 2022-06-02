@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
 export default function IndexPage(props) {
   const pageData = props?.data?.data?.pageCollection?.items?.[0];
@@ -8,6 +9,7 @@ export default function IndexPage(props) {
       <Head>
         <title>{pageData.title}</title>
       </Head>
+      <main>{documentToReactComponents(pageData.body.json)}</main>
     </>
   );
 }
@@ -21,7 +23,7 @@ export async function getServerSideProps(context) {
         "content-type": "application/json"
       },
       body:
-        '{"query":"query {\\n  pageCollection(limit: 1) {\\n    items {\\n      title\\n      slug\\n    }\\n  }\\n}","variables":null}',
+        '{"query":"query {\\n  pageCollection(limit: 1) {\\n    items {\\n      title\\n      slug\\n      body {\\n        json\\n      }\\n    }\\n  }\\n}","variables":null}',
       method: "POST"
     }
   );
